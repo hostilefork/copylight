@@ -1,0 +1,82 @@
+
+/* Because CSS, HTML, etc. don't have their act together, there's no convenient way to set up
+   a global variable for where your images are located.  So we just put the images in
+   the CSS directory.
+   
+   http://stackoverflow.com/questions/5824680/theres-a-way-to-set-a-default-directory-for-the-images-used-in-css
+*/
+
+/* These classes turn copylight on and off */
+.copylight-on {
+}
+.copylight-off {
+}
+
+/* Attribution hyperlinks are hidden by default */
+.copylight-by {
+	display: none;
+}
+
+/* The Traffic light Icon */
+/* Image reference: http://www.norebbo.com/store/details.php?gid=79&pid=1857 */
+.traffic-yellow {
+	position: absolute;
+	_background-image: none;
+	width: 64px;
+	height: 64px;
+	margin: -32px 0 0 -32px;
+	background: url(alerts/gray.png);
+	z-order: 999;
+	filter: progid:DXImageTransform.Microsoft.AlphaImageLoader(src="alerts/gray.png", sizingMethod="image");
+}
+/* Span is necessary, don't ask why */
+.traffic-yellow:hover {
+	cursor: pointer;
+	background:url(alerts/yellow.png);
+	filter: progid:DXImageTransform.Microsoft.AlphaImageLoader(src="alerts/yellow.png", sizingMethod="image");
+}
+.span.traffic-red:hover {
+	cursor: pointer;
+	background:url(alerts/red.png);
+	filter: progid:DXImageTransform.Microsoft.AlphaImageLoader(src="alerts/red.png", sizingMethod="image");
+}
+.span.traffic-green:hover {
+	cursor: pointer;
+	background:url(alerts/green.png);
+	filter: progid:DXImageTransform.Microsoft.AlphaImageLoader(src="alerts/green.png", sizingMethod="image");
+}
+
+/* WATERMARKS */
+/* http://www.maxdesign.com.au/articles/multiple-classes/ */
+.copylighted.all-rights-reserved {
+	background-image: url("watermarks/all-rights-reserved.png");
+	background-repeat: repeat;
+}
+.copylighted.cc-by {
+	background-image: url("watermarks/cc-by.png");
+	background-repeat: repeat;
+}
+.copylighted.cc-by-sa {
+	background-image: url("watermarks/cc-by-sa.png");
+	background-repeat: repeat;
+}
+.copylighted.cc-by-nd {
+	background-image: url("watermarks/cc-by-nd.png");
+	background-repeat: repeat;
+}
+.copylighted.cc-by-nc {
+	background-image: url("watermarks/cc-by-nc.png");
+	background-repeat: repeat;
+}
+.copylighted.cc-by-nc-sa {
+	background-image: url("watermarks/cc-by-nc-sa.png");
+	background-repeat: repeat;
+}
+.copylighted.cc-by-nc-nd {
+	background-image: url("watermarks/cc-by-nc-nd.png");
+	background-repeat: repeat;
+}
+.copylighted.none {
+	background-color: white;
+	background-repeat: no-repeat;
+}
