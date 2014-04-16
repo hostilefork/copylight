@@ -18,7 +18,7 @@
 	"use strict";
 
 	var globals = {
-		warningIconSpan: null,
+		alertSpan: null,
 		debugMode: false, // enable with $.copylight('debug')(true);
 		numCopyLightElements: 0,
 		markedElements : null,
@@ -301,15 +301,15 @@
 		// Target page should make it easy to get this page's URL to the clipboard
 		// Can make whatever appeal to respecting copyright you want
 	
-		// For some reason, just hiding and showing the warningIconSpan was causing it to move
+		// For some reason, just hiding and showing the alertSpan was causing it to move
 		// around.	The seemingly-more-disruptive act of throwing in a placeholder does not.
 		var emptyPlaceholderSpan = $('<span />');
 		var saveData = saveSelection(window.getSelection());
 		
 		// If we use replaceWith() instead of insert/detach then there is an unbind() so that
-		// any events on the warningIconSpan are removed...
-		emptyPlaceholderSpan.insertAfter(globals.warningIconSpan);
-		globals.warningIconSpan.detach();
+		// any events on the alertSpan are removed...
+		emptyPlaceholderSpan.insertAfter(globals.alertSpan);
+		globals.alertSpan.detach();
 		
 		if (globals.modalDialog !== null) {
 			throw "copylight: Modal dialog already being displayed.";
@@ -334,7 +334,7 @@
 				hash.w.hide();
 				hash.o.remove(); // remove overlay
 				saveData.restore(); // put selection back
-				emptyPlaceholderSpan.replaceWith(globals.warningIconSpan);
+				emptyPlaceholderSpan.replaceWith(globals.alertSpan);
 				globals.modalDialog.remove();
 				globals.modalDialog = null;
 			},
@@ -351,14 +351,14 @@
 	}
 
 	function showWarningIconIfInvisible() {
-		if (globals.warningIconSpan) {
-			globals.warningIconSpan.show();
+		if (globals.alertSpan) {
+			globals.alertSpan.show();
 		}
 	}
 
 	function hideWarningIconIfVisible() {
-		if (globals.warningIconSpan) {
-			globals.warningIconSpan.hide();
+		if (globals.alertSpan) {
+			globals.alertSpan.hide();
 		}
 	}
 
@@ -381,13 +381,13 @@
 		hideAnyWatermarks();
 		
 		// Remove floating warning icon if it's there
-		if (globals.warningIconSpan) {
-			var spanParent = globals.warningIconSpan.parentNode;
-			var spanPrevSibling = globals.warningIconSpan.previousSibling;
-			var spanNextSibling = globals.warningIconSpan.nextSibling;
-			globals.warningIconSpan.mouseup(null);
-			globals.warningIconSpan.remove();
-			globals.warningIconSpan = null;
+		if (globals.alertSpan) {
+			var spanParent = globals.alertSpan.parentNode;
+			var spanPrevSibling = globals.alertSpan.previousSibling;
+			var spanNextSibling = globals.alertSpan.nextSibling;
+			globals.alertSpan.mouseup(null);
+			globals.alertSpan.remove();
+			globals.alertSpan = null;
 
 			// spanParent.normalize() would be nice, but if the user has a
 			// selection (or is working on making a selection) then disrupting
@@ -430,7 +430,7 @@
 		var range = selection.getRangeAt(0);
 		var allWithinRangeParent = $(range.commonAncestorContainer).find("*").andSelf();
 		
-		var showStoplight = false;
+		var showAlert = false;
 		
 		if (globals.markedElements !== null) {
 			throw "copylight: Cannot call notifyUserIfSelectionIsSubstantial with marked elements";
@@ -457,25 +457,27 @@
 			// even if it's not fully selected
 			if (selection.containsNode(el, true) ) {
 				var license = getNearestAncestorLicenseData($el);
-				if (license) {
-				
-					// just a test...make it so that cc-zero
+				if (license) {				
+					var textSelected = selection.toString();
+					if (textSelected.length < license.charLimitForNotice) {
+						return;
+					}
+
+					// just a test...make it so that cc-zero makes a "hole"
 					if (license['license'] === 'cc-zero') {
 						$el.css(license.cssToUndoBackgroundChange);	
 					} else {
-						var textSelected = selection.toString();
-						if (textSelected.length < license.charLimitForNotice) {
-							return;
-						}
-						$.merge(globals.markedElements, license.target.copylight('watermark', true));
+						$.merge(globals.markedElements, 
+							license.target.copylight('watermark', true)
+						);
 					}
-				}
 
-				showStoplight = true;
+					showAlert = true;
+				}
 			}
 		});
 		
-		if (!showStoplight) {
+		if (!showAlert) {
 			return;
 		}
 			
@@ -483,9 +485,9 @@
 		// by putting it into the DOM at the point where the selection ended.
 		// NOTE: What will semantics be when user selects large areas using
 		// something other than start end points?  double clicks?  Programmatic?
-		globals.warningIconSpan = $('<span class="copylight-alert yellow" id="traffic" title="IMPORTANT: Click to Read License BEFORE Copying!" />');
+		globals.alertSpan = $('<span class="copylight-alert yellow" id="traffic" title="IMPORTANT: Click to Read License BEFORE Copying!" />');
 		/* display="none"?	display="inline"? */
-		globals.warningIconSpan.mousedown(crashGuard(openCopyrightPolicyWindow));
+		globals.alertSpan.mousedown(crashGuard(openCopyrightPolicyWindow));
 		
 		// https://developer.mozilla.org/En/DOM:selection
 		// anchorNode - Returns the node in which the selection begins. 
@@ -510,9 +512,9 @@
 		}
 		// http://www.ruby-forum.com/topic/147322
 		if (selection.focusOffset == 0) {
-			globals.warningIconSpan.insertBefore(selection.focusNode)
+			globals.alertSpan.insertBefore(selection.focusNode)
 		} else {
-			globals.warningIconSpan.insertAfter(selection.focusNode);
+			globals.alertSpan.insertAfter(selection.focusNode);
 		}
 		saveData.restore();	
 	}
@@ -520,8 +522,8 @@
 	function mousedownHandler(event) {
 		crashGuard(function(event) {
 			globals.inMouseHandler = true;
-			if ((event.which === 1 /* left click */) && globals.warningIconSpan) {
-				if (event.element === globals.warningIconSpan) {
+			if ((event.which === 1 /* left click */) && globals.alertSpan) {
+				if (event.element === globals.alertSpan) {
 					// do not want clicking on the warning icon to disrupt selection
 					// https://developer.mozilla.org/en/DOM/event.preventDefault
 					event.preventDefault();
