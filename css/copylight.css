@@ -3,8 +3,7 @@
    a global variable for where your images are located.  So we just put the images in
    the CSS directory.
    
-   http://stackoverflow.com/questions/5824680/theres-a-way-to-set-a-default-directory-for-the-images-used-in-css
-*/
+   http://stackoverflow.com/questions/5824680/
 
 /* These classes turn copylight on and off */
 .copylight-on {
@@ -19,8 +18,9 @@
 
 /* The Traffic light Icon */
 /* Image reference: http://www.norebbo.com/store/details.php?gid=79&pid=1857 */
-.traffic-yellow {
+span.copylight-alert {
 	position: absolute;
+	cursor: pointer;
 	_background-image: none;
 	width: 64px;
 	height: 64px;
@@ -29,19 +29,15 @@
 	z-order: 999;
 	filter: progid:DXImageTransform.Microsoft.AlphaImageLoader(src="alerts/gray.png", sizingMethod="image");
 }
-/* Span is necessary, don't ask why */
-.traffic-yellow:hover {
-	cursor: pointer;
+span.copylight-alert.yellow:hover {
 	background:url(alerts/yellow.png);
 	filter: progid:DXImageTransform.Microsoft.AlphaImageLoader(src="alerts/yellow.png", sizingMethod="image");
 }
-.span.traffic-red:hover {
-	cursor: pointer;
+span.copylight-alert.red:hover {
 	background:url(alerts/red.png);
 	filter: progid:DXImageTransform.Microsoft.AlphaImageLoader(src="alerts/red.png", sizingMethod="image");
 }
-.span.traffic-green:hover {
-	cursor: pointer;
+span.copylight-alert.green:hover {
 	background:url(alerts/green.png);
 	filter: progid:DXImageTransform.Microsoft.AlphaImageLoader(src="alerts/green.png", sizingMethod="image");
 }

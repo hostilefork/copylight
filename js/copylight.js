@@ -19,7 +19,7 @@
 
 	var globals = {
 		warningIconSpan: null,
-		debugMode: false, // enable with $.copyLight('debug')(true);
+		debugMode: false, // enable with $.copylight('debug')(true);
 		numCopyLightElements: 0,
 		markedElements : null,
 		inMouseHandler: false,
@@ -144,7 +144,7 @@
 	function getNearestAncestorLicenseData($el) {
 		var $current = $el;
 		do {
-			var data = $current.data('copyLight');
+			var data = $current.data('copylight');
 			if (data) {
 				return data;
 			}
@@ -312,7 +312,7 @@
 		globals.warningIconSpan.detach();
 		
 		if (globals.modalDialog !== null) {
-			throw "copyLight: Modal dialog already being displayed.";
+			throw "copylight: Modal dialog already being displayed.";
 		}
 		
 		globals.modalDialog = $('<div class="jqmAlert" id="ext3">' +
@@ -363,7 +363,7 @@
 	}
 
 	function hideAnyWatermarks() {	
-		globals.markedElements.copyLight('watermark', false);
+		globals.markedElements.copylight('watermark', false);
 		globals.markedElements = null;
 	}
 
@@ -375,7 +375,7 @@
 	// -or- mouseup handling.
 	function removeAnyWarnings() {
 		if (globals.inMouseHandler) {
-			throw "copyLight: Cannot call removeAnyWarnings from a mouse handler";
+			throw "copylight: Cannot call removeAnyWarnings from a mouse handler";
 		}
 		
 		hideAnyWatermarks();
@@ -412,7 +412,7 @@
 
 	function notifyUserIfSelectionIsSubstantial(mouseX, mouseY) {
 		if (globals.inMouseHandler) {
-			throw "copyLight: Cannot call notifyUserIfSelectionIsSubstantial from a mouse handler";
+			throw "copylight: Cannot call notifyUserIfSelectionIsSubstantial from a mouse handler";
 		}
 
 		// No selection means no notification is necessary
@@ -433,7 +433,7 @@
 		var showStoplight = false;
 		
 		if (globals.markedElements !== null) {
-			throw "copyLight: Cannot call notifyUserIfSelectionIsSubstantial with marked elements";
+			throw "copylight: Cannot call notifyUserIfSelectionIsSubstantial with marked elements";
 		}
 		globals.markedElements = $([]);
 
@@ -442,7 +442,7 @@
 		// See: http://stackoverflow.com/questions/8083701/workaround-for-lack-of-css-feature-to-suppress-inherited-styles-and-backgroun
 		$.each(allWithinRangeParent, function (i, el) {
 			var $el = $(el);
-			var data = $el.data('copyLight');
+			var data = $el.data('copylight');
 			if (data) {
 				data.cachedStyleString = $el.attr('style');
 				data.cssToUndoBackgroundChange = getCssToUndoBackgroundChange($el);
@@ -467,11 +467,11 @@
 						if (textSelected.length < license.charLimitForNotice) {
 							return;
 						}
-						showStoplight = true;
-
-						$.merge(globals.markedElements, license.target.copyLight('watermark', true));
+						$.merge(globals.markedElements, license.target.copylight('watermark', true));
 					}
 				}
+
+				showStoplight = true;
 			}
 		});
 		
@@ -483,10 +483,9 @@
 		// by putting it into the DOM at the point where the selection ended.
 		// NOTE: What will semantics be when user selects large areas using
 		// something other than start end points?  double clicks?  Programmatic?
-		globals.warningIconSpan = $('<span class="traffic-yellow" style="position:absolute; left:' + mouseX + 'px; top:' + mouseY + 'px" id="traffic" title="IMPORTANT: Click to Read License BEFORE Copying!" />');
+		globals.warningIconSpan = $('<span class="copylight-alert yellow" id="traffic" title="IMPORTANT: Click to Read License BEFORE Copying!" />');
 		/* display="none"?	display="inline"? */
 		globals.warningIconSpan.mousedown(crashGuard(openCopyrightPolicyWindow));
-		globals.warningIconSpan.mouseover(crashGuard(function() { globals.warningIconSpan.css('cursor', 'pointer');}));
 		
 		// https://developer.mozilla.org/En/DOM:selection
 		// anchorNode - Returns the node in which the selection begins. 
@@ -515,9 +514,7 @@
 		} else {
 			globals.warningIconSpan.insertAfter(selection.focusNode);
 		}
-		saveData.restore();
-	
-		globals.warningIconSpan.css('cursor', 'pointer'); 
+		saveData.restore();	
 	}
 
 	function mousedownHandler(event) {
@@ -561,25 +558,15 @@
 		})(event);
 	}
 
-	// These methods are only called through .copyLight which has a crashGuard()
+	// These methods are only called through .copylight which has a crashGuard()
 	// so all of these are implicitly protected against crashing in non-debug mode
 	var methods = {
 		init : function(options) {
 			
-			// invoked as $.copyLight(options);
-			// we scan document and try to do as much "automatic" smarts as possible
-			if (this === jQuery) {
-				var result = $([]);
-				$.each(globals.licenseInformation, function(k, v) {
-					result.add($("." + k).copyLight($.extend(options, {license: k})));
-				});
-				return result;
-			}
-			
 			return this.each(function(){
 				
 				var $this = $(this);
-				var data = $this.data('copyLight');
+				var data = $this.data('copylight');
 				
 				// If the plugin hasn't been initialized yet for this element
 				if (!data) {
@@ -597,7 +584,7 @@
 						$.extend(settings, options);
 					}
 					
-					$this.data('copyLight', $.extend(settings, {
+					$this.data('copylight', $.extend(settings, {
 						target : $this
 					}));
 					
@@ -608,15 +595,15 @@
 					// http://stackoverflow.com/questions/2655597/when-should-i-observe-javascript-events-on-window-vs-document-vs-document-body
 					// http://docs.jquery.com/Namespaced_Events
 					
-					$(document).bind('mouseup.copyLight', mouseupHandler);
-					$(document).bind('mousedown.copyLight', mousedownHandler);
+					$(document).bind('mouseup.copylight', mouseupHandler);
+					$(document).bind('mousedown.copylight', mousedownHandler);
 				}
 			});
 		},
 
 		debug : function(arg) {
 			globals.debugMode = arg;
-			alert('copyLight debug mode is ON');
+			alert('copylight debug mode is ON');
 		},
 
 		watermark : function(arg) {
@@ -640,9 +627,9 @@
 			this.each(function(i, el){
 				
 				var $el = $(el);
-				var data = $el.data('copyLight');
+				var data = $el.data('copylight');
 				if (!data) {
-					throw "copyLight.watermark called on node that wasn't configured for a license";
+					throw "copylight.watermark called on node that wasn't configured for a license";
 				}
 				var enable = arg ? true : false;
 				if (data.watermarked === enable) {
@@ -676,34 +663,42 @@
 			return this.each(function(){
 			
 				var $this = $(this);
-				var data = $this.data('copyLight');
+				var data = $this.data('copylight');
 								
 				// if any DOM elements were created and stored in .data, be sure to .remove() here
 				
-				$this.removeData('copyLight');
+				$this.removeData('copylight');
 				
 				if (--globals.numCopyLightElements === 0) {
 					// http://docs.jquery.com/Namespaced_Events
-					$(document).unbind('.copyLight');
+					$(document).unbind('.copylight');
 				}
 			});
 		}
 	};
 
-	$.fn.copyLight = crashGuard(function(method) {
+	$.fn.copylight = crashGuard(function(method) {
 
 		if (methods[method]) {
 			return methods[method].apply(this, Array.prototype.slice.call(arguments, 1));
 		} else if (typeof method === 'object' || !method) {
 			return methods.init.apply(this, arguments);
 		} else {
-			return $.error('Method ' + method + ' does not exist on jQuery.copyLight');
+			return $.error('Method ' + method + ' does not exist on jQuery.copylight');
 		}
 	});
 	
 	// http://stackoverflow.com/questions/7985923/minimal-modifications-to-jquery-plugin-sample-to-call-plugin-with-no-elements
     $.extend({
-        copyLight: $.fn.copyLight
+        copylight: $.fn.copylight
+    });
+
+    // Global initialization - runs one time
+    $(function() {
+		// we scan document and try to do as much "automatic" smarts as possible
+		$.each(globals.licenseInformation, function(k, v) {
+			$("." + k).copylight({license: k});
+		});
     });
 	
 }(jQuery)); // end CopyLight plugin
