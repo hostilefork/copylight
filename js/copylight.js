@@ -24,18 +24,18 @@
 		markedElements : null,
 		inMouseHandler: false,
 		modalDialog: null,
-		licenseInformation: {
+		licenseInfo: {
 			'cc-zero': {
 				url: "http://creativecommons.org/publicdomain/zero/1.0/",
 				color: "green"
 			},
 			'cc-by': {
 				url: "http://creativecommons.org/licenses/by/3.0/",
-				color: "green"
+				color: "yellow"
 			},
 			'cc-by-sa': {
 				url: "http://creativecommons.org/licenses/by-sa/3.0/",
-				color: "green"
+				color: "yellow"
 			},
 			'cc-by-nd': {
 				url: "http://creativecommons.org/licenses/by-nd/3.0/",
@@ -449,6 +449,12 @@
 			}
 		});
 		
+		var alertColors = {
+			red: false,
+			yellow: false,
+			green: false
+		};
+
 		// Second loop: now we start applying watermarks
 		$.each(allWithinRangeParent, function (i, el) {
 			var $el = $(el);
@@ -456,21 +462,23 @@
 			// The second parameter says to include the element
 			// even if it's not fully selected
 			if (selection.containsNode(el, true) ) {
-				var license = getNearestAncestorLicenseData($el);
-				if (license) {				
+				var data = getNearestAncestorLicenseData($el);
+				if (data) {				
 					var textSelected = selection.toString();
-					if (textSelected.length < license.charLimitForNotice) {
+					if (textSelected.length < data.charLimitForNotice) {
 						return;
 					}
 
 					// just a test...make it so that cc-zero makes a "hole"
-					if (license['license'] === 'cc-zero') {
-						$el.css(license.cssToUndoBackgroundChange);	
+					if (data['license'] === 'cc-zero') {
+						$el.css(data.cssToUndoBackgroundChange);	
 					} else {
 						$.merge(globals.markedElements, 
-							license.target.copylight('watermark', true)
+							data.target.copylight('watermark', true)
 						);
 					}
+
+					alertColors[globals.licenseInfo[data.license].color] = true;
 
 					showAlert = true;
 				}
@@ -485,7 +493,17 @@
 		// by putting it into the DOM at the point where the selection ended.
 		// NOTE: What will semantics be when user selects large areas using
 		// something other than start end points?  double clicks?  Programmatic?
-		globals.alertSpan = $('<span class="copylight-alert yellow" id="traffic" title="IMPORTANT: Click to Read License BEFORE Copying!" />');
+		globals.alertSpan = $('<span class="copylight-alert" id="traffic" title="IMPORTANT: Click to Read License BEFORE Copying!" />');
+		if (alertColors.red) {
+			globals.alertSpan.addClass('red');
+		}
+		if (alertColors.yellow) {
+			globals.alertSpan.addClass('yellow');
+		}
+		if (alertColors.green) {
+			globals.alertSpan.addClass('green');
+		}
+
 		/* display="none"?	display="inline"? */
 		globals.alertSpan.mousedown(crashGuard(openCopyrightPolicyWindow));
 		
@@ -698,7 +716,7 @@
     // Global initialization - runs one time
     $(function() {
 		// we scan document and try to do as much "automatic" smarts as possible
-		$.each(globals.licenseInformation, function(k, v) {
+		$.each(globals.licenseInfo, function(k, v) {
 			$("." + k).copylight({license: k});
 		});
     });

@@ -41,6 +41,19 @@ span.copylight-alert.green:hover {
 	background:url(alerts/green.png);
 	filter: progid:DXImageTransform.Microsoft.AlphaImageLoader(src="alerts/green.png", sizingMethod="image");
 }
+span.copylight-alert.yellow.green:hover {
+	background:url(alerts/yellow-green.png);
+	filter: progid:DXImageTransform.Microsoft.AlphaImageLoader(src="alerts/yellow.png", sizingMethod="image");
+}
+span.copylight-alert.red.yellow:hover {
+	background:url(alerts/red-yellow.png);
+	filter: progid:DXImageTransform.Microsoft.AlphaImageLoader(src="alerts/red.png", sizingMethod="image");
+}
+span.copylight-alert.red.yellow.green:hover {
+	background:url(alerts/red-yellow-green.png);
+	filter: progid:DXImageTransform.Microsoft.AlphaImageLoader(src="alerts/green.png", sizingMethod="image");
+}
+
 
 /* WATERMARKS */
 /* http://www.maxdesign.com.au/articles/multiple-classes/ */
