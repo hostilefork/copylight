@@ -1,0 +1,116 @@
+<!doctype html>
+<!-- http://stackoverflow.com/a/11846837/211160 -->
+<!--[if lt IE 7]> <html lang="en" class="ie lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>    <html lang="en" class="ie lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>    <html lang="en" class="ie lt-ie9"> <![endif]-->
+<!--[if gt IE 8]> <html lang="en" class="ie"> <![endif]-->
+<html lang="en">
+	<head>
+		<meta charset="utf-8"> 
+
+		<title>Nested Licenses</title> 
+		
+		<!-- Google-hosted jquery library, minified -->
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.min.js" type="text/javascript"></script>
+		
+		<!-- Compatibility Layer so that Internet Explorer will support W3C ranges -->
+		<!-- http://code.google.com/p/ierange/ -->
+		<!-- NOTE: Conditional comment is actually an IE "feature" -->
+		<!-- http://www.positioniseverything.net/articles/cc-plus.html -->
+		<!--[if IE]>
+			<script src="js/ierange-m2.js" type="text/javascript" ></script>
+		<![endif]-->
+		
+		<script src="../js/jqModal.js" type="text/javascript"></script>
+		<script src="../js/copylight.js" type="text/javascript"></script>
+		<link href="../css/copylight.css" rel="stylesheet" type="text/css" />
+		<link href="../css/jqModal-alert.css" rel="stylesheet" type="text/css" />
+		<script type="text/javascript">
+			$(function() {
+				$.copylight('debug', true);
+				$('#main').copylight({license: "all-rights-reserved", charLimitForNotice: 32});
+				$('#wiki').copylight({license: "cc-by-sa"});
+				$('#quote').copylight({license: "cc-zero"});
+				// to get rid of copyLight on an element after it's added, use 'destroy'
+				/* $('#main').copyLight('destroy'); */
+			});
+		</script>
+		<style>
+			body {
+				background-image: url('parchment.jpg');
+			}
+		</style>
+	</head>
+	<body>
+		<div id="main">
+			<h2>COPYLIGHT: Nested license sample</h2>
+
+			<p>Let's imagine that the outer text in this case is something that we wish to
+			apply a license to which is restrictive in some way, such as an "all rights reserved"
+			license.  And lets imagine if you ever try to copy more than one sentence out of it
+			then you will get a watermark and a warning.  However, let's imagine that you also
+			want to cite material from a source which has a less restrictive license...such as
+			Wikipedia.  For instance, the article about
+			<a href="http://en.wikipedia.org/wiki/Post_scarcity">post-scarcity</a>:</p>
+			
+			<div id="wiki"><blockquote>
+				<p>Traditionally, creators have used (and continue to use) raw materials to instantiate
+				their works: a painter might use oil and canvas, a sculptor might work in clay, an
+				architect might draft designs in pen and ink. Such work would result in a single copy
+				(or "artifact"). While mass reproduction of such works ("impressions") - by processes
+				such as printmaking or photocopying - is possible and common, such reproduction still
+				incurs appreciable costs (for example for the paper used, and for the physical
+				distribution of the copy).</p>
+				
+				<p>Where the artifact can be captured digitally, copies have minimal reproduction
+				costs. The same painter could create an original work with graphics software; the
+				sculptor might use rapid prototyping, direct digital manufacturing, and 3D printing;
+				the architect CAD/CAM tools. Most of the "cost" in such works is in paying for the
+				original design and development - for the creators' expertise and for their tools
+				(though these also do not wear out the same way physical tools do). While the creators
+				of such works must still labor to create the design matrix, there are virtually no
+				raw-materials required to recreate the work once completed.</p>
+				
+				<p>This negligible-cost reproduction raises the question, "How much should one pay for
+				something that can be copied near-indefinitely at minimal expense?" Does a purchaser
+				have the right to reproduce their own copy as much as they can afford to? Some people
+				believe the purchaser does not or should not have any rights to copy or transfer
+				ownership, and use Digital Rights Management to try to enforce this view. Other
+				instead feel that information should be freely distributed (see copyleft), and that
+				DRM measures are attempts to restore prior business models' viability by inducing
+				artificial scarcity.<p>
+				
+				<p>Many advocates of open source software and Free software attempt to collaboratively
+				create open-source software programs which are intended to offer similar capabilities
+				to their proprietary software competitors, but with the source code made public and
+				permission granted for users to freely copy the software. Richard Stallman, the founder
+				of the GNU project which designed the Free software GNU operating system, and
+				co-founder of the free software movement, has explicitly cited the eventual creation of
+				a post-scarcity society as one of his motivations:</p>
+
+				<div id="quote"><blockquote>
+				<p><i>"In the long run, making programs free is a step toward the
+				post-scarcity world, where nobody will have to work very hard just to make a living.
+				People will be free to devote themselves to activities that are fun, such as
+				programming, after spending the necessary ten hours a week on required tasks such as
+				legislation, family counseling, robot repair and asteroid prospecting. There will be
+				no need to be able to make a living from programming."</i></p>
+				</blockquote></div>
+
+			</blockquote></div>
+			
+			<p>So here we have a case of a nested license.  In this case I escaped it so that the  
+			quote from Richard Stallman isn't participating in the system at all...it represents
+			a "hole" where no license trigger or watermark is generated.</p>
+			
+			<b>Here's some more text</b>
+			
+			<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris tempor sem nec velit tristique eleifend. Nunc semper odio vel metus molestie nec aliquet lectus porta. Mauris at porttitor diam. Donec tempus magna sed nulla laoreet ultricies. Praesent in lacus quis dui tristique faucibus at id elit. Donec vitae scelerisque est. Vivamus scelerisque faucibus mollis. Sed rutrum dolor a eros bibendum eget consectetur massa eleifend. Vestibulum porttitor ante dignissim nibh malesuada sit amet sollicitudin ante hendrerit. Vestibulum egestas sem quis turpis venenatis at congue libero convallis. Quisque sagittis fermentum diam vel ultrices.</p>
+			
+			<p>Suspendisse pellentesque odio turpis. Aenean vel ipsum nisi. In ultrices, nunc vel faucibus egestas, odio enim ultricies sapien, fringilla gravida mi ante quis dolor. Ut vel quam lobortis tortor tempus aliquet sit amet vehicula est. Etiam nec interdum justo. Aliquam vestibulum sodales pulvinar. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed eu sem eget ligula molestie facilisis. Sed auctor faucibus eros vitae rutrum. Donec eu massa vitae sapien semper tincidunt vel et dolor. Etiam massa massa, interdum nec mattis auctor, eleifend venenatis tortor. In pulvinar, eros at pulvinar interdum, massa mi venenatis nisi, eget feugiat purus ante sed turpis.</p>
+			
+			<p>In nunc sapien, hendrerit a cursus et, rhoncus sit amet lacus. Praesent feugiat arcu urna, vel varius augue. Vivamus ullamcorper urna vitae sapien commodo vel suscipit eros convallis. Quisque consequat massa id massa molestie adipiscing. Pellentesque euismod tellus ut nunc sodales semper. Aliquam venenatis risus vel neque facilisis sollicitudin. Morbi ornare massa et elit fringilla a fermentum lectus commodo. Integer porta augue vel felis sollicitudin volutpat. Aliquam erat volutpat. Proin sodales, justo at varius auctor, turpis tortor aliquam arcu, ultrices egestas augue metus a elit. Phasellus tempor purus non lorem feugiat eu faucibus tellus aliquet. Donec lobortis velit non magna iaculis in lacinia leo placerat. Pellentesque sapien augue, faucibus vitae ultricies at, aliquet commodo magna. Aliquam nunc felis, varius eget hendrerit eu, ullamcorper quis nibh. Phasellus sed consectetur elit. Suspendisse et lectus et turpis ultrices scelerisque. Sed a diam sed arcu sodales pulvinar.</p>
+
+		</div>	
+	</body>
+</html>

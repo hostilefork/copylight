@@ -1,0 +1,103 @@
+<!doctype html>
+<!-- http://stackoverflow.com/a/11846837/211160 -->
+<!--[if lt IE 7]> <html lang="en" class="ie lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>    <html lang="en" class="ie lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>    <html lang="en" class="ie lt-ie9"> <![endif]-->
+<!--[if gt IE 8]> <html lang="en" class="ie"> <![endif]-->
+<html lang="en">
+	<head>
+		<meta charset="utf-8"> 
+
+		<title>License Groups</title> 
+		
+		<!-- Google-hosted jquery library, minified -->
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.min.js" type="text/javascript"></script>
+		
+		<!-- Compatibility Layer so that Internet Explorer will support W3C ranges -->
+		<!-- http://code.google.com/p/ierange/ -->
+		<!-- NOTE: Conditional comment is actually an IE "feature" -->
+		<!-- http://www.positioniseverything.net/articles/cc-plus.html -->
+		<!--[if IE]>
+			<script src="js/ierange-m2.js" type="text/javascript" ></script>
+		<![endif]-->
+		
+		<script src="../js/jqModal.js" type="text/javascript"></script>
+		<script src="../js/copylight.js" type="text/javascript"></script>
+		<link href="../css/copylight.css" rel="stylesheet" type="text/css" />
+		<link href="../css/jqModal-alert.css" rel="stylesheet" type="text/css" />
+		<script type="text/javascript">
+			$(function() {
+				$.copylight('debug', true);
+				/*$('#main').copyLight({license: "all-rights-reserved", charLimitForNotice: 32}); */
+				
+				/* The object you pass to the copyLight init function is the config.  If
+				   you pass the same config object in multiple times it is assumed to be
+				   a group. */
+				/* Should license and char limit and related functions be on the group?
+				   how to keep interface simple for more common cases? */
+				var g = {article: "http://en.wikipedia.org/wiki/Defective_by_Design"};
+				$('#wiki1').copylight({license: "cc-by-sa", group: g});
+				$('#wiki2').copylight({license: "cc-by-sa", group: g});
+				$('#wiki3').copylight({license: "cc-by-sa", group: g});
+				
+				// to get rid of copyLight on an element after it's added, use 'destroy'
+				/* $('#main').copyLight('destroy'); */
+			});
+		</script>
+	</head>
+	<body>
+		<div id="main">
+			<h2>COPYLIGHT: License groups sample</h2>
+
+			<p>Sometimes text belongs to a license group.  A license group is helpful if your
+			content is actually spread so that it doesn't fall under a single descendant.  Let's
+			imagine we don't want a single selection of one of the following divs to trigger a
+			license notification, but selecting several of them should.  It becomes clear that
+			the trigger for notification should be a property of the license group...</p>
+			
+			<p>So here let's say we are taking a few bits from the same Wikipedia article:</p>
+			
+			<div id="wiki1"><blockquote>
+			<p>Defective by Design is an anti-digital rights management (DRM) initiative by 
+			the Free Software Foundation. DRM technology, dubbed "digital restrictions management"
+			by opponents, restricts users’ ability to freely use their purchased movies, music,
+			literature, software, and hardware in ways they are accustomed to with ordinary
+			non-restricted media (such as books and audio Compact Discs).</p>
+			</blockquote></div>
+
+			<p>And then we copy some more:</p>
+
+			<div id="wiki2"><blockquote>			
+			<p>The philosophy of the initiative is that DRM is designed to be deliberately
+			defective, to restrict the use of the product. This, they claim, cripples the future
+			of digital freedom. The group aims to target "Big Media, unhelpful manufacturers,
+			and DRM distributors" and to bring public awareness of the issue and increase
+			participation in the initiative.</p>
+			</blockquote></div>
+			
+			<p>Then we copy a little more, and think in our heads "wow, people would have to
+			really have their head screwed on backwards to want to live in a world where we
+			can't copy and paste information.</p>
+			
+			<div id="wiki3"><blockquote>
+			<p>It represents one of the first efforts of the
+			Free Software Foundation to find common cause with mainstream social activists, and
+			to encourage free software advocates to become socially involved. As of late 2006, the
+			campaign was claiming over 12,000 registered members.</p>
+			</blockquote></div>
+			
+			<p>What's fun here is to notice how spanning selections in the license group can 
+			notice that a significant material selection is being made from a single source,
+			despite that source being split up.</p>
+			
+			<b>Here's some more text</b>
+			
+			<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris tempor sem nec velit tristique eleifend. Nunc semper odio vel metus molestie nec aliquet lectus porta. Mauris at porttitor diam. Donec tempus magna sed nulla laoreet ultricies. Praesent in lacus quis dui tristique faucibus at id elit. Donec vitae scelerisque est. Vivamus scelerisque faucibus mollis. Sed rutrum dolor a eros bibendum eget consectetur massa eleifend. Vestibulum porttitor ante dignissim nibh malesuada sit amet sollicitudin ante hendrerit. Vestibulum egestas sem quis turpis venenatis at congue libero convallis. Quisque sagittis fermentum diam vel ultrices.</p>
+			
+			<p>Suspendisse pellentesque odio turpis. Aenean vel ipsum nisi. In ultrices, nunc vel faucibus egestas, odio enim ultricies sapien, fringilla gravida mi ante quis dolor. Ut vel quam lobortis tortor tempus aliquet sit amet vehicula est. Etiam nec interdum justo. Aliquam vestibulum sodales pulvinar. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed eu sem eget ligula molestie facilisis. Sed auctor faucibus eros vitae rutrum. Donec eu massa vitae sapien semper tincidunt vel et dolor. Etiam massa massa, interdum nec mattis auctor, eleifend venenatis tortor. In pulvinar, eros at pulvinar interdum, massa mi venenatis nisi, eget feugiat purus ante sed turpis.</p>
+			
+			<p>In nunc sapien, hendrerit a cursus et, rhoncus sit amet lacus. Praesent feugiat arcu urna, vel varius augue. Vivamus ullamcorper urna vitae sapien commodo vel suscipit eros convallis. Quisque consequat massa id massa molestie adipiscing. Pellentesque euismod tellus ut nunc sodales semper. Aliquam venenatis risus vel neque facilisis sollicitudin. Morbi ornare massa et elit fringilla a fermentum lectus commodo. Integer porta augue vel felis sollicitudin volutpat. Aliquam erat volutpat. Proin sodales, justo at varius auctor, turpis tortor aliquam arcu, ultrices egestas augue metus a elit. Phasellus tempor purus non lorem feugiat eu faucibus tellus aliquet. Donec lobortis velit non magna iaculis in lacinia leo placerat. Pellentesque sapien augue, faucibus vitae ultricies at, aliquet commodo magna. Aliquam nunc felis, varius eget hendrerit eu, ullamcorper quis nibh. Phasellus sed consectetur elit. Suspendisse et lectus et turpis ultrices scelerisque. Sed a diam sed arcu sodales pulvinar.</p>
+
+		</div>	
+	</body>
+</html>
