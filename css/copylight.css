@@ -21,10 +21,15 @@
 span.copylight-alert {
 	position: absolute;
 	cursor: pointer;
-	_background-image: none;
+/*	_background-image: none; */
 	width: 64px;
 	height: 64px;
+
+	/* 
+	 * This centers the icon...
+	 * but it may push the icon off the screen and need adjustment */
 	margin: -32px 0 0 -32px;
+
 	background: url(alerts/gray.png);
 	z-order: 999;
 	filter: progid:DXImageTransform.Microsoft.AlphaImageLoader(src="alerts/gray.png", sizingMethod="image");

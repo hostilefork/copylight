@@ -493,19 +493,23 @@
 		// by putting it into the DOM at the point where the selection ended.
 		// NOTE: What will semantics be when user selects large areas using
 		// something other than start end points?  double clicks?  Programmatic?
-		globals.alertSpan = $('<span class="copylight-alert" id="traffic" title="IMPORTANT: Click to Read License BEFORE Copying!" />');
+		var alertSpan = $('<span></span>');
+		alertSpan.addClass('copylight-alert');
+		alertSpan.attr('title',
+			'IMPORTANT: Click to Read License BEFORE Copying!'
+		);
 		if (alertColors.red) {
-			globals.alertSpan.addClass('red');
+			alertSpan.addClass('red');
 		}
 		if (alertColors.yellow) {
-			globals.alertSpan.addClass('yellow');
+			alertSpan.addClass('yellow');
 		}
 		if (alertColors.green) {
-			globals.alertSpan.addClass('green');
+			alertSpan.addClass('green');
 		}
 
 		/* display="none"?	display="inline"? */
-		globals.alertSpan.mousedown(crashGuard(openCopyrightPolicyWindow));
+		alertSpan.mousedown(crashGuard(openCopyrightPolicyWindow));
 		
 		// https://developer.mozilla.org/En/DOM:selection
 		// anchorNode - Returns the node in which the selection begins. 
@@ -530,11 +534,26 @@
 		}
 		// http://www.ruby-forum.com/topic/147322
 		if (selection.focusOffset == 0) {
-			globals.alertSpan.insertBefore(selection.focusNode)
+			alertSpan.insertBefore(selection.focusNode)
 		} else {
-			globals.alertSpan.insertAfter(selection.focusNode);
+			alertSpan.insertAfter(selection.focusNode);
 		}
-		saveData.restore();	
+		saveData.restore();
+
+		// See notes in CSS file about why we have to do this
+		// Should we also account for going off the right and bottom?  (rarer)
+		alertSpan.css('margin-left', '-32px');
+		alertSpan.css('margin-top', '-32px');
+		var leftOffset = alertSpan.offset().left;
+		if (leftOffset < 0) {
+			alertSpan.css('margin-left', -32 + (-leftOffset) + "px");
+		}
+		var topOffset = alertSpan.offset().top;
+		if (topOffset < 0) {
+			alertSpan.css('margin-top', -32 + (-topOffset) + "px");
+		}
+
+		globals.alertSpan = alertSpan;
 	}
 
 	function mousedownHandler(event) {
