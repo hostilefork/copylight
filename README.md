@@ -6,7 +6,7 @@ When a large enough selection happens to trigger the plugin, a color-coded "stop
 
 Although CopyLight can be used to draw a page visitor's attention to a "red light" licensing *restriction*, it can also emphasize "green light" or "yellow light" *freedoms* governing content that uses [Creative Commons](http://http://creativecommons.org/) licenses.
 
-See [copylight.hostilefork.com](http://copylight.hostilefork.com) for additional information about this project and the motivations for creating it.
+I personally think it would best to live in a world where we wouldn't need such things.  But it was created to present as an alternative to those who would use patently worse solutions *(like disabling copying or selection entirely)*.  See [copylight.hostilefork.com](http://copylight.hostilefork.com) for more information about this experiment and the motivations for creating it.
 
 
 # Using CopyLight on Your Page

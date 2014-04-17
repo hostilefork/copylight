@@ -10,21 +10,22 @@
 
 		<title>Nested Licenses</title> 
 		
-		<!-- Google-hosted jquery library, minified -->
-		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.min.js" type="text/javascript"></script>
+		<!-- Google-hosted jquery, minified; for latest: http://scriptsrc.net -->
+		<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
 		
 		<!-- Compatibility Layer so that Internet Explorer will support W3C ranges -->
 		<!-- http://code.google.com/p/ierange/ -->
 		<!-- NOTE: Conditional comment is actually an IE "feature" -->
 		<!-- http://www.positioniseverything.net/articles/cc-plus.html -->
 		<!--[if IE]>
-			<script src="js/ierange-m2.js" type="text/javascript" ></script>
+			<script src="../js/ierange/ierange-m2.js" type="text/javascript" ></script>
 		<![endif]-->
 		
-		<script src="../js/jqModal.js" type="text/javascript"></script>
+		<script src="../js/jquery.simplemodal/jquery.simplemodal.js" type="text/javascript"></script>
+
 		<script src="../js/copylight.js" type="text/javascript"></script>
 		<link href="../css/copylight.css" rel="stylesheet" type="text/css" />
-		<link href="../css/jqModal-alert.css" rel="stylesheet" type="text/css" />
+		
 		<script type="text/javascript">
 			$(function() {
 				$.copylight('debug', true);

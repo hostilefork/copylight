@@ -331,34 +331,23 @@
 		if (globals.modalDialog !== null) {
 			throw "copylight: Modal dialog already being displayed.";
 		}
-		
-		globals.modalDialog = $('<div class="jqmAlert" id="ext3">' +
-			'<div class="jqmAlertWindow" id="ext3b">' +
-    			'<div class="jqmAlertTitle clearfix">' +
-    				'<h1>Did you know?</h1><a href="#" class="jqmClose"><em>Close</em></a>' +
-  				'</div>' +
-  				'<div class="jqmAlertContent">' +
-  					'<p>Please wait...</p>' +
-  				'</div>' +
-			'</div>' +
-		'</div>');
-		
-		$(document.body).append(globals.modalDialog);
-		
-		// http://dev.iceburg.net/jquery/jqModal/
-		globals.modalDialog.jqm({
-			onHide: function(hash) {
-				hash.w.hide();
-				hash.o.remove(); // remove overlay
-				saveData.restore(); // put selection back
-				emptyPlaceholderSpan.replaceWith(globals.alertSpan);
-				globals.modalDialog.remove();
-				globals.modalDialog = null;
-			},
-			target: 'div.jqmAlertContent',
-			overlay: 20 // percentage of opacity
+
+		var $containerDiv = $("<div>License info goes here...</div>");
+
+		var $modalBox = $("<div id='basic-modal'></div>");
+
+		var $modalContent = $("<div class='simplemodal-data'></div>");
+		$modalContent.append($containerDiv);
+
+		$modalBox.append($modalContent);
+
+		$modalBox.modal({
+			// "Fixed" means the box will scroll with the page instead
+			// of float as you scroll it in the same location it was
+			// when it popped up.
+
+			fixed: false
 		});
-		globals.modalDialog.jqmShow();
 
 		event.preventDefault();
 	}
