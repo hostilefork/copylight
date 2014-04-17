@@ -27,35 +27,43 @@
 		licenseInfo: {
 			'cc-zero': {
 				url: "http://creativecommons.org/publicdomain/zero/1.0/",
-				color: "green"
+				color: "green",
+				name: "Creative Commons Public Domain Dedication"
 			},
 			'cc-by': {
-				url: "http://creativecommons.org/licenses/by/3.0/",
-				color: "yellow"
-			},
-			'cc-by-sa': {
-				url: "http://creativecommons.org/licenses/by-sa/3.0/",
-				color: "yellow"
+				url: "http://creativecommons.org/licenses/by/4.0/",
+				color: "yellow",
+				name: "Creative Commons Attribution"
 			},
 			'cc-by-nd': {
-				url: "http://creativecommons.org/licenses/by-nd/3.0/",
-				color: "yellow"
+				url: "http://creativecommons.org/licenses/by-nd/4.0/",
+				color: "yellow",
+				name: "Creative Commons Attribution-NoDerivatives"
 			},
 			'cc-by-nc': {
-				url: "http://creativecommons.org/licenses/by-nc/3.0/",
-				color: "yellow"
+				url: "http://creativecommons.org/licenses/by-nc/4.0/",
+				color: "yellow",
+				name: "Creative Commons Attribution-NonCommercial"
 			},
-			'cc-by-nc-sa': {
-				url: "http://creativecommons.org/licenses/by-nc-sa/3.0/",
-				color: "yellow"
+			'cc-by-sa': {
+				url: "http://creativecommons.org/licenses/by-sa/4.0/",
+				color: "yellow",
+				name: "Creative Commons Attribution-ShareAlike"
 			},
 			'cc-by-nc-nd': {
-				url: "http://creativecommons.org/licenses/by-nc-nd/3.0/",
-				color: "yellow"
+				url: "http://creativecommons.org/licenses/by-nc-nd/4.0/",
+				color: "yellow",
+				name: "Creative Commons Attribution-NonCommercial-NoDerivatives"
+			},
+			'cc-by-nc-sa': {
+				url: "http://creativecommons.org/licenses/by-nc-sa/4.0/",
+				color: "yellow",
+				name: "Creative Commons Attribution-NonCommercial-ShareAlike"
 			},
 			'all-rights-reserved': {
 				url: "http://en.wikipedia.org/wiki/All_rights_reserved",
-				color: "red"
+				color: "red",
+				name: "All Rights Reserved"
 			}
 		}
 	};
