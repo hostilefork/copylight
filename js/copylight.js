@@ -87,60 +87,64 @@
 		var attributes = [
 			'font-family','font-size','font-weight','font-style','color',
 			'text-transform','text-decoration','letter-spacing','word-spacing',
-			'line-height','text-align','vertical-align','direction','background-color',
-			'background-image','background-repeat','background-position',
-			'background-attachment','opacity','width','height','top','right','bottom',
-			'left','margin-top','margin-right','margin-bottom','margin-left',
-			'padding-top','padding-right','padding-bottom','padding-left',
-			'border-top-width','border-right-width','border-bottom-width',
-			'border-left-width','border-top-color','border-right-color',
-			'border-bottom-color','border-left-color','border-top-style',
-			'border-right-style','border-bottom-style','border-left-style','position',
-			'display','visibility','z-index','overflow-x','overflow-y','white-space',
-			'clip','float','clear','cursor','list-style-image','list-style-position',
-			'list-style-type','marker-offset'
+			'line-height','text-align','vertical-align','direction',
+			'background-color','background-image','background-repeat',
+			'background-position','background-attachment','opacity','width',
+			'height','top','right','bottom', 'left','margin-top','margin-right',
+			'margin-bottom','margin-left','padding-top','padding-right',
+			'padding-bottom','padding-left','border-top-width',
+			'border-right-width','border-bottom-width','border-left-width',
+			'border-top-color','border-right-color','border-bottom-color',
+			'border-left-color','border-top-style','border-right-style',
+			'border-bottom-style','border-left-style','position','display',
+			'visibility','z-index','overflow-x','overflow-y','white-space',
+			'clip','float','clear','cursor','list-style-image',
+			'list-style-position','list-style-type','marker-offset'
 		];
 		var computedStyles = {};
 		$.each(attributes, function(i, attr){
-			// used to use .css(attr) but that stopped working in later jQuery/Chrome
 			// http://stackoverflow.com/questions/7623535/
-			computedStyles[attr] = $el.prop(attr);
+			computedStyles[attr] = $el.css(attr);
 		});
 		return computedStyles;
 	}
 	
-	// This routine will climb up and return enough CSS style information for el that
-	// you can apply it to "undo" the influence of a style change applied at a higher
-	// node.
+	// This routine will climb up and return enough CSS style information for
+	// el that you can apply it to "undo" the influence of a style change
+	// applied at a higher node.
 	function getCssToUndoBackgroundChange(el) {
 		var $el = $(el);
-		// REVIEW: computed style format probably different in different browsers.  How to test
-		// for transparent in a cross browser way?  Make a sample transparent node, and then 
-		// compute its style, and hope the browser is consistent?
-		var parentComputedStyles = {'background-image': 'none', 'background-color': 'rgba(0, 0, 0, 0)'};
-		var childComputedStyles = getComputedStyles($el);
+		// REVIEW: computed style format probably different in different
+		// browsers.  How to test for transparent in a cross browser way?  Make
+		// a sample transparent node, and then compute its style, and hope the
+		// browser is consistent?
+		var parentStyles = {
+			'background-image': 'none',
+			'background-color': 'rgba(0, 0, 0, 0)'
+		};
+		var childStyles = getComputedStyles($el);
 		while ($el.length !== 0) {
 			// look for any deltas.  if there's a delta, then this parent is the
 			// node that influences us.
-			if (parentComputedStyles['background-image'] != childComputedStyles['background-image']) {
+			if (parentStyles['background-image'] != childStyles['background-image']) {
 				// to compensate, we steal the image for ourselves
-				// we actually need to compute the shift amount, and sync this if the window resizes
-				return {'background-image': parentComputedStyles['background-image']};
+				// we actually need to compute the shift amount,
+				// and sync this if the window resizes
+				return {'background-image': parentStyles['background-image']};
 			}
-			if (parentComputedStyles['background-color'] != childComputedStyles['background-color']) {
-				return {'background-color': parentComputedStyles['background-color']};
+			if (parentStyles['background-color'] != childStyles['background-color']) {
+				return {'background-color': parentStyles['background-color']};
 			}
 			
-			childComputedStyles = parentComputedStyles;
+			childStyles = parentStyles;
 			$el = $el.parent();
 			if ($el.length !== 0) {
-				parentComputedStyles = getComputedStyles(el);
+				parentStyles = getComputedStyles(el);
 			}
 		}
 		return {'background-color': 'white'};  // REVIEW
 	}
 
-	// http://stackoverflow.com/questions/205853/why-would-a-javascript-variable-start-with-a-dollar-sign
 	function getNearestAncestorLicenseData($el) {
 		var $current = $el;
 		do {
@@ -156,12 +160,12 @@
 	function saveSelection(selectionObject) {
 		// https://developer.mozilla.org/en/DOM/Selection/rangeCount
 		// "A user can normally only select one range at a time, so the 
-		//	rangeCount will usually be 1. Scripting can be use to make the selection
-		//	contain more than 1 range."
+		//	rangeCount will usually be 1. Scripting can be use to make the 
+		//  selection contain more than 1 range."
 		//
-		// So if they have only one range selected, we make sure we preserve whether
-		// the cursor is at the start or the end.  Otherwise we just focus on
-		// getting the ranges right.  
+		// So if they have only one range selected, we make sure we preserve
+		// whether the cursor is at the start or the end.  Otherwise we just
+		// focus on getting the ranges right.  
 		var ret = null;
 		switch (selectionObject.rangeCount) {
 			case 0:
@@ -169,10 +173,10 @@
 				break;
 
 			case 1:
-				// The range-level API seems to throw out the selection direction
-				// information (e.g. if the user started from the left and dragged
-				// to the right, or from the right and dragged to the left).  So
-				// we manually generate single a single range which preserves
+				// The range-level API throws out the selection direction
+				// information (if the user started from the left and dragged
+				// to the right, or from the right and dragged to the left).
+				// We manually generate single a single range which preserves
 				// the direction info available in the selection interface
 				ret = {
 					rangeCount: 1,
@@ -256,27 +260,31 @@
 		};
 		
 		ret.restore = function() {
-			var selection = window.getSelection();
-			selection.removeAllRanges();
+			var sel = window.getSelection();
+			sel.removeAllRanges();
 		
 			switch (this.rangeCount) {
 				case 0:
 					break;
 				case 1:
-					var rangeDescriptor = this.rangeDescriptors[0];
+					var descriptor = this.rangeDescriptors[0];
 					
 					var singleRange = document.createRange();
 					singleRange.setStart(
-						rangeDescriptor.startContainer,
-						rangeDescriptor.startOffset);
-					selection.addRange(singleRange);
+						descriptor.startContainer,
+						descriptor.startOffset
+					);
+					sel.addRange(singleRange);
 					
-					if ((rangeDescriptor.startContainer !== rangeDescriptor.endContainer) ||
-							(rangeDescriptor.startOffset !== rangeDescriptor.endOffset)) {
-						// avoids [Exception... "Component returned failure code: 0x80004005
-						// (NS_ERROR_FAILURE) [nsISelection.extend]" nsresult: "0x80004005
-						// (NS_ERROR_FAILURE)"
-						selection.extend(rangeDescriptor.endContainer, rangeDescriptor.endOffset);
+					if (
+						(descriptor.startOffset !== descriptor.endOffset) ||
+						(descriptor.startContainer !== descriptor.endContainer)
+					) {
+						// avoids Exception:
+						//  "Component returned failure code: 0x80004005
+						// (NS_ERROR_FAILURE) [nsISelection.extend]"
+						// nsresult: "0x80004005 (NS_ERROR_FAILURE)"
+						sel.extend(descriptor.endContainer, descriptor.endOffset);
 					}
 					break;
 				default:
@@ -298,16 +306,17 @@
 
 	function openCopyrightPolicyWindow(event) {
 		// Callback function when user clicks on the warning button
-		// Target page should make it easy to get this page's URL to the clipboard
+		// Should make it easy to get this page's URL to the clipboard
 		// Can make whatever appeal to respecting copyright you want
 	
-		// For some reason, just hiding and showing the alertSpan was causing it to move
-		// around.	The seemingly-more-disruptive act of throwing in a placeholder does not.
-		var emptyPlaceholderSpan = $('<span />');
+		// For some reason, just hiding and showing the alertSpan was causing
+		// it to movearound.  The seemingly-more-disruptive act of throwing in
+		// a placeholder does not.
+		var emptyPlaceholderSpan = $('<span></span>');
 		var saveData = saveSelection(window.getSelection());
 		
-		// If we use replaceWith() instead of insert/detach then there is an unbind() so that
-		// any events on the alertSpan are removed...
+		// If we use replaceWith() instead of insert/detach then there is
+		// an unbind() so that any events on the alertSpan are removed...
 		emptyPlaceholderSpan.insertAfter(globals.alertSpan);
 		globals.alertSpan.detach();
 		
@@ -342,11 +351,7 @@
 			overlay: 20 // percentage of opacity
 		});
 		globals.modalDialog.jqmShow();
-		
-	/*	var newWindow = window.open('CopyrightPolicy.html?' + document.location.href, 'CopyrightPolicy');
-		if (newWindow) {
-			newWindow.focus();
-		} */
+
 		event.preventDefault();
 	}
 
@@ -382,9 +387,9 @@
 		
 		// Remove floating warning icon if it's there
 		if (globals.alertSpan) {
-			var spanParent = globals.alertSpan.parentNode;
-			var spanPrevSibling = globals.alertSpan.previousSibling;
-			var spanNextSibling = globals.alertSpan.nextSibling;
+			var parent = globals.alertSpan.parentNode;
+			var prevSibling = globals.alertSpan.previousSibling;
+			var pextSibling = globals.alertSpan.nextSibling;
 			globals.alertSpan.mouseup(null);
 			globals.alertSpan.remove();
 			globals.alertSpan = null;
@@ -400,19 +405,20 @@
 				var selection = window.getSelection();
 				var saveData = saveSelection(selection);
 				// Manual normalization, sigh.
-				var joinOffset = spanPrevSibling.data.length;
-				spanPrevSibling.data = spanPrevSibling.data + spanNextSibling.data;
-				spanParent.removeChild(spanNextSibling); // no remove() on TextNode elements :(
-				if (saveData.adjustForJoin(spanPrevSibling, joinOffset, spanNextSibling)) {
+				var joinOffset = prevSibling.data.length;
+				prevSibling.data = prevSibling.data + nextSibling.data;
+				// no remove() on TextNode elements :(
+				parent.removeChild(nextSibling);
+				if (saveData.adjustForJoin(prevSibling, joinOffset, nextSibling)) {
 					saveData.restore();
 				}
 			}
 		}
 	}
 
-	function notifyUserIfSelectionIsSubstantial(mouseX, mouseY) {
+	function notifyIfSubstantialSelection(mouseX, mouseY) {
 		if (globals.inMouseHandler) {
-			throw "copylight: Cannot call notifyUserIfSelectionIsSubstantial from a mouse handler";
+			throw Error("Copylight: cannot notify from a mouse handler");
 		}
 
 		// No selection means no notification is necessary
@@ -421,26 +427,28 @@
 		if (!selection) {
 			return;
 		}
-		// http://stackoverflow.com/questions/3212112/getrangeat-error-if-no-text-is-selected
+		// http://stackoverflow.com/questions/3212112/
 		if (selection.rangeCount === 0) {
 			return;
 		}
 			
-		// http://stackoverflow.com/questions/4220478/get-all-dom-block-elements-for-selected-texts 
+		// http://stackoverflow.com/questions/4220478/
 		var range = selection.getRangeAt(0);
-		var allWithinRangeParent = $(range.commonAncestorContainer).find("*").andSelf();
+		var $allInRange = $(range.commonAncestorContainer).find("*").andSelf();
 		
 		var showAlert = false;
 		
 		if (globals.markedElements !== null) {
-			throw "copylight: Cannot call notifyUserIfSelectionIsSubstantial with marked elements";
+			throw Error("Copylight: Cannot notify if marked elements exist");
 		}
 		globals.markedElements = $([]);
 
-		// First loop: Before we start applying any watermarking styles, we need to look for any
-		// "holes" that we will need to cut out of the watermarked areas to undo their influence
-		// See: http://stackoverflow.com/questions/8083701/workaround-for-lack-of-css-feature-to-suppress-inherited-styles-and-backgroun
-		$.each(allWithinRangeParent, function (i, el) {
+		// First loop: Before we start applying any watermarking styles, we 
+		// need to look for any "holes" that we will need to cut out of the
+		// watermarked areas to undo their influence
+		//
+		// http://stackoverflow.com/questions/8083701/
+		$allInRange.each(function (i, el) {
 			var $el = $(el);
 			var data = $el.data('copylight');
 			if (data) {
@@ -456,7 +464,7 @@
 		};
 
 		// Second loop: now we start applying watermarks
-		$.each(allWithinRangeParent, function (i, el) {
+		$allInRange.each(function (i, el) {
 			var $el = $(el);
 						
 			// The second parameter says to include the element
@@ -513,10 +521,10 @@
 		
 		// https://developer.mozilla.org/En/DOM:selection
 		// anchorNode - Returns the node in which the selection begins. 
-		// anchorOffset - Returns the number of characters that the selection's anchor
+		// anchorOffset - Number of characters that the selection's anchor
 		//					 is offset within the anchorNode. 
 		// focusNode - Returns the node in which the selection ends. 
-		// focusOffset - Returns the number of characters that the selection's focus 
+		// focusOffset - Number of characters that the selection's focus 
 		//					 is offset within the focusNode.
 	
 		// REVIEW: Opera does not seem to differentiate between the cases where
@@ -527,7 +535,11 @@
 			// This split operation could disrupt the pointers a selection has
 			// into the ranges.
 			var newNode = (selection.focusNode).splitText(selection.focusOffset);
-			if (saveData.adjustForSplit(selection.focusNode, selection.focusOffset, newNode)) {
+			if (
+				saveData.adjustForSplit(
+					selection.focusNode, selection.focusOffset, newNode
+				)
+			) {
 				// always restore the selection
 				$.noop();
 			}
@@ -561,7 +573,7 @@
 			globals.inMouseHandler = true;
 			if ((event.which === 1 /* left click */) && globals.alertSpan) {
 				if (event.element === globals.alertSpan) {
-					// do not want clicking on the warning icon to disrupt selection
+					// do not want click on the alert icon to disrupt selection
 					// https://developer.mozilla.org/en/DOM/event.preventDefault
 					event.preventDefault();
 				} else {
@@ -581,24 +593,22 @@
 			if (event.which === 1 /* left click */) {
 				// Let the selection finalize mouseUp before disrupting the DOM
 				// failure to do this leads to weird behaviors, sometimes, which
-				// includes Firefox not being receptive to the selection being changed
+				// includes Firefox not receptive to the selection being changed
 				// by further mousedown messages (!)
 			
 				// only do this if we are not showing a dialog...
 				if (globals.modalDialog === null) {
-					window.setTimeout(crashGuard(
-						function(x,y) {
-							notifyUserIfSelectionIsSubstantial(event.pageX, event.pageY);
-						}
-					), 0);
+					window.setTimeout(crashGuard(function(x,y) {
+						notifyIfSubstantialSelection(event.pageX, event.pageY);
+					}), 0);
 				}
 			}
 			globals.inMouseHandler = false;
 		})(event);
 	}
 
-	// These methods are only called through .copylight which has a crashGuard()
-	// so all of these are implicitly protected against crashing in non-debug mode
+	// Methods are only called through .copylight which has a crashGuard()
+	// All of these are implicitly protected against crashing in non-debug mode
 	var methods = {
 		init : function(options) {
 			
@@ -631,7 +641,7 @@
 				}
 				
 				if (globals.numCopyLightElements++ === 0) {
-					// http://stackoverflow.com/questions/2655597/when-should-i-observe-javascript-events-on-window-vs-document-vs-document-body
+					// http://stackoverflow.com/questions/2655597/
 					// http://docs.jquery.com/Namespaced_Events
 					
 					$(document).bind('mouseup.copylight', mouseupHandler);
@@ -646,9 +656,9 @@
 		},
 
 		watermark : function(arg) {
-			// returns the collection of elements that had their watermark status changed
+			// returns elements that had their watermark status changed
 			
-			// http://stackoverflow.com/questions/2832008/adding-newly-created-dom-elements-to-an-empty-jquery-object
+			// http://stackoverflow.com/questions/2832008/
 			var changedList = $([]);
 			
 			var defaultWatermarkHandler = function(enable, license) {
@@ -668,7 +678,7 @@
 				var $el = $(el);
 				var data = $el.data('copylight');
 				if (!data) {
-					throw "copylight.watermark called on node that wasn't configured for a license";
+					throw Error("Copylight: No license for watermark on node");
 				}
 				var enable = arg ? true : false;
 				if (data.watermarked === enable) {
@@ -704,8 +714,8 @@
 				var $this = $(this);
 				var data = $this.data('copylight');
 								
-				// if any DOM elements were created and stored in .data, be sure to .remove() here
-				
+				// if any DOM elements were created and stored in .data,
+				// be sure to .remove() here
 				$this.removeData('copylight');
 				
 				if (--globals.numCopyLightElements === 0) {
@@ -719,22 +729,24 @@
 	$.fn.copylight = crashGuard(function(method) {
 
 		if (methods[method]) {
-			return methods[method].apply(this, Array.prototype.slice.call(arguments, 1));
+			return methods[method].apply(
+				this, Array.prototype.slice.call(arguments, 1)
+			);
 		} else if (typeof method === 'object' || !method) {
 			return methods.init.apply(this, arguments);
 		} else {
-			return $.error('Method ' + method + ' does not exist on jQuery.copylight');
+			return $.error('No ' + method + '() on jQuery.copylight');
 		}
 	});
 	
-	// http://stackoverflow.com/questions/7985923/minimal-modifications-to-jquery-plugin-sample-to-call-plugin-with-no-elements
+	// http://stackoverflow.com/questions/7985923/
     $.extend({
         copylight: $.fn.copylight
     });
 
     // Global initialization - runs one time
     $(function() {
-		// we scan document and try to do as much "automatic" smarts as possible
+		// scan document and try to do as much "automatic" smarts as possible
 		$.each(globals.licenseInfo, function(k, v) {
 			$("." + k).copylight({license: k});
 		});
