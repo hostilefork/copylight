@@ -63,7 +63,16 @@ span.copylight-alert.red.yellow.green:hover {
 
 
 /* WATERMARKS */
-/* http://www.maxdesign.com.au/articles/multiple-classes/ */
+
+/*
+ * all watermarking is done by the JavaScript now.  There may be a way to do
+ * this by reflecting the CSS and not having to edit the JS, but it's not
+ * worth it to figure that out at the moment.  Some approaches enumerated here:
+ *
+ * http://stackoverflow.com/questions/2226869/
+ */
+
+/*
 .copylighted.all-rights-reserved {
 	background-image: url("watermarks/all-rights-reserved.png");
 	background-repeat: repeat;
@@ -92,10 +101,7 @@ span.copylight-alert.red.yellow.green:hover {
 	background-image: url("watermarks/cc-by-nc-nd.png");
 	background-repeat: repeat;
 }
-.copylighted.none {
-	background-color: white;
-	background-repeat: no-repeat;
-}
+*/
 
 
 /* default CSS for the modal dialog box */

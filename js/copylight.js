@@ -89,81 +89,42 @@
 			}
 		};
 	}
-			
-	function getComputedStyles(el) {
-	    var $el = $(el);
-		var attributes = [
-			'font-family','font-size','font-weight','font-style','color',
-			'text-transform','text-decoration','letter-spacing','word-spacing',
-			'line-height','text-align','vertical-align','direction',
-			'background-color','background-image','background-repeat',
-			'background-position','background-attachment','opacity','width',
-			'height','top','right','bottom', 'left','margin-top','margin-right',
-			'margin-bottom','margin-left','padding-top','padding-right',
-			'padding-bottom','padding-left','border-top-width',
-			'border-right-width','border-bottom-width','border-left-width',
-			'border-top-color','border-right-color','border-bottom-color',
-			'border-left-color','border-top-style','border-right-style',
-			'border-bottom-style','border-left-style','position','display',
-			'visibility','z-index','overflow-x','overflow-y','white-space',
-			'clip','float','clear','cursor','list-style-image',
-			'list-style-position','list-style-type','marker-offset'
-		];
-		var computedStyles = {};
-		$.each(attributes, function(i, attr){
-			// http://stackoverflow.com/questions/7623535/
-			computedStyles[attr] = $el.css(attr);
-		});
-		return computedStyles;
-	}
-	
-	// This routine will climb up and return enough CSS style information for
-	// el that you can apply it to "undo" the influence of a style change
-	// applied at a higher node.
-	function getCssToUndoBackgroundChange(el) {
-		var $el = $(el);
-		// REVIEW: computed style format probably different in different
-		// browsers.  How to test for transparent in a cross browser way?  Make
-		// a sample transparent node, and then compute its style, and hope the
-		// browser is consistent?
-		var parentStyles = {
-			'background-image': 'none',
-			'background-color': 'rgba(0, 0, 0, 0)'
-		};
-		var childStyles = getComputedStyles($el);
-		while ($el.length !== 0) {
-			// look for any deltas.  if there's a delta, then this parent is the
-			// node that influences us.
-			if (parentStyles['background-image'] != childStyles['background-image']) {
-				// to compensate, we steal the image for ourselves
-				// we actually need to compute the shift amount,
-				// and sync this if the window resizes
-				return {'background-image': parentStyles['background-image']};
-			}
-			if (parentStyles['background-color'] != childStyles['background-color']) {
-				return {'background-color': parentStyles['background-color']};
-			}
-			
-			childStyles = parentStyles;
-			$el = $el.parent();
-			if ($el.length !== 0) {
-				parentStyles = getComputedStyles(el);
-			}
-		}
-		return {'background-color': 'white'};  // REVIEW
-	}
 
-	function getNearestAncestorLicenseData($el) {
-		var $current = $el;
-		do {
-			var data = $current.data('copylight');
-			if (data) {
-				return data;
-			}
-			$current = $current.parent();
-		} while ($current.length);
-		return null; // default, or error?	cc-zero?
-	}
+	// http://stackoverflow.com/a/8196183/211160
+	jQuery.fn.cacheStyles = function() {
+		return this.each(function(){
+			self = $(this);
+			var attributes = ['font-family','font-size','font-weight','font-style','color',
+				'text-transform','text-decoration','letter-spacing','word-spacing',
+				'line-height','text-align','vertical-align','direction','background-color',
+				'background-image','background-repeat','background-position',
+				'background-attachment','opacity','width','height','top','right','bottom',
+				'left','margin-top','margin-right','margin-bottom','margin-left',
+				'padding-top','padding-right','padding-bottom','padding-left',
+				'border-top-width','border-right-width','border-bottom-width',
+				'border-left-width','border-top-color','border-right-color',
+				'border-bottom-color','border-left-color','border-top-style',
+				'border-right-style','border-bottom-style','border-left-style','position',
+				'display','visibility','z-index','overflow-x','overflow-y','white-space',
+				'clip','float','clear','cursor','list-style-image','list-style-position',
+				'list-style-type','marker-offset'];
+			var cachedStyles = {};
+			$.each(attributes, function(i, attr){
+				cachedStyles[attr] = self.css(attr);
+			});
+			self.data('cachedStyles', cachedStyles);
+		});
+	};
+
+	// http://stackoverflow.com/a/8196183/211160		
+	jQuery.fn.recoverStyles = function(){
+		return this.each(function(){
+			var self = $(this);
+			var cachedStyles = self.data('cachedStyles');
+			self.removeData('cachedStyles');
+			self.css(cachedStyles);
+		});
+	};
 	
 	function saveSelection(selectionObject) {
 		// https://developer.mozilla.org/en/DOM/Selection/rangeCount
@@ -352,23 +313,6 @@
 		event.preventDefault();
 	}
 
-	function showWarningIconIfInvisible() {
-		if (globals.alertSpan) {
-			globals.alertSpan.show();
-		}
-	}
-
-	function hideWarningIconIfVisible() {
-		if (globals.alertSpan) {
-			globals.alertSpan.hide();
-		}
-	}
-
-	function hideAnyWatermarks() {	
-		globals.markedElements.copylight('watermark', false);
-		globals.markedElements = null;
-	}
-
 	// Unfortunately, if the user is in mid-making a selection, disrupting the
 	// DOM near the selection is bad.  The effects are wonky and you will see
 	// them only if you are making certain kinds of selections near the disruption.
@@ -380,7 +324,8 @@
 			throw "copylight: Cannot call removeAnyWarnings from a mouse handler";
 		}
 		
-		hideAnyWatermarks();
+		globals.markedElements.recoverStyles();
+		globals.markedElements = null;
 		
 		// Remove floating warning icon if it's there
 		if (globals.alertSpan) {
@@ -413,6 +358,8 @@
 		}
 	}
 
+	// http://stackoverflow.com/a/8196183/211160
+
 	function notifyIfSubstantialSelection(mouseX, mouseY) {
 		if (globals.inMouseHandler) {
 			throw Error("Copylight: cannot notify from a mouse handler");
@@ -428,69 +375,127 @@
 		if (selection.rangeCount === 0) {
 			return;
 		}
-			
-		// http://stackoverflow.com/questions/4220478/
-		var range = selection.getRangeAt(0);
-		var $allInRange = $(range.commonAncestorContainer).find("*").andSelf();
-		
-		var showAlert = false;
-		
+
 		if (globals.markedElements !== null) {
 			throw Error("Copylight: Cannot notify if marked elements exist");
 		}
-		globals.markedElements = $([]);
+			
+		// http://stackoverflow.com/questions/4220478/
+		var range = selection.getRangeAt(0);
+
+		var showAlert = false;
+		var $licensed = $([]);
 
 		// First loop: Before we start applying any watermarking styles, we 
 		// need to look for any "holes" that we will need to cut out of the
 		// watermarked areas to undo their influence
 		//
-		// http://stackoverflow.com/questions/8083701/
-		$allInRange.each(function (i, el) {
-			var $el = $(el);
-			var data = $el.data('copylight');
-			if (data) {
-				data.cachedStyleString = $el.attr('style');
-				data.cssToUndoBackgroundChange = getCssToUndoBackgroundChange($el);
-			}
-		});
-		
+		// Breadth-first traversal.
+		//
+		// http://stackoverflow.com/questions/16526641/
+
+		var level = $(range.commonAncestorContainer);
+
+		while (level.length) {
+    		level = level.children().each(function(idx, el) {
+    			var $el = $(el);
+
+				var data = null;
+				var $current = $el;
+				do {
+					data = $current.data('copylight');
+					if (data) {
+						break;
+					}
+					$current = $current.parent();
+				} while ($current.length);
+
+				if (data && !$licensed.filter($current).length) {
+					var textSelected = selection.toString();
+					if (textSelected.length < data.charLimitForNotice) {
+						return;
+					}
+
+					$licensed = $licensed.add($current);
+
+					$current.cacheStyles();
+
+					$current.parent().cacheStyles();
+					$current.parent().recoverStyles();
+
+					var bgImage = 'none';
+					var bgRepeat = 'repeat';
+					var rootPosition = '0';
+					var $next = $el.parent();
+				
+					while($next.length){
+						var bg = $next.css('background-image');
+						if (bg && bg !== 'none'){
+							bgImage = bg;
+							bgRepeat = $next[0].style.backgroundRepeat;
+							rootPosition = $next.offset();
+							rootPosition.x += $next[0].style.backgroundPositionX || 0;
+							rootPosition.y += $next[0].style.backgroundPositionY || 0;
+							break;
+						}
+						$next = $next.parent();
+					};
+					if (bgImage == 'none'){
+						bgImage = undefined;
+					}
+					
+					var parent = el.parentNode;
+					if (bgImage && (
+						   parent.style.backgroundColor === 'rgba(0, 0, 0, 0)'
+						|| parent.style.backgroundColor === 'transparent'
+					)){
+						var pos = $(parent).offset();
+						parent.style.backgroundImage = bgImage;
+						parent.style.backgroundRepeat = bgRepeat;
+						var x = rootPosition.left - pos.left;
+						var y = rootPosition.top - pos.top;
+						parent.style.backgroundPosition = x + 'px ' + y + 'px';
+					}
+				}
+ 			})
+		}
+
 		var alertColors = {
 			red: false,
 			yellow: false,
 			green: false
 		};
 
-		// Second loop: now we start applying watermarks
-		$allInRange.each(function (i, el) {
+		// Second loop: now we start applying watermarks; we have cached
+		// styles on all the license roots so we can use them.
+		//
+		// do styles on children first to avoid contamination from parent
+		// styles...
+		//
+		// http://stackoverflow.com/a/1394050/211160
+		$($licensed.get().reverse()).each(function (i, el) {
 			var $el = $(el);
-						
+
+			var data = $el.data('copylight');
+			if (!data) {
+				throw Error("Expected copylight data in enumeration.");
+			}
+
 			// The second parameter says to include the element
 			// even if it's not fully selected
 			if (selection.containsNode(el, true) ) {
-				var data = getNearestAncestorLicenseData($el);
-				if (data) {				
-					var textSelected = selection.toString();
-					if (textSelected.length < data.charLimitForNotice) {
-						return;
-					}
+				$el.css('background-image', 'url("../css/watermarks/' + data.license + '.png")');
+				$el.css('background-repeat', 'repeat');
 
-					// just a test...make it so that cc-zero makes a "hole"
-					if (data['license'] === 'cc-zero') {
-						$el.css(data.cssToUndoBackgroundChange);	
-					} else {
-						$.merge(globals.markedElements, 
-							data.target.copylight('watermark', true)
-						);
-					}
+				alertColors[globals.licenseInfo[data.license].color] = true;
 
-					alertColors[globals.licenseInfo[data.license].color] = true;
-
-					showAlert = true;
-				}
+				showAlert = true;
 			}
 		});
 		
 		if (!showAlert) {
+			$licensed.recoverStyles();
+			globals.markedElements = $([]);
 			return;
 		}
 			
@@ -563,21 +568,21 @@
 		}
 
 		globals.alertSpan = alertSpan;
+		globals.markedElements = $licensed;
+
 	}
 
 	function mousedownHandler(event) {
 		crashGuard(function(event) {
 			globals.inMouseHandler = true;
-			if ((event.which === 1 /* left click */) && globals.alertSpan) {
-				if (event.element === globals.alertSpan) {
-					// do not want click on the alert icon to disrupt selection
-					// https://developer.mozilla.org/en/DOM/event.preventDefault
-					event.preventDefault();
-				} else {
-					if (globals.modalDialog === null) {
-						hideAnyWatermarks();
-						hideWarningIconIfVisible();
-					}
+			if (globals.modalDialog === null) {
+				if (globals.markedElements) {
+					globals.markedElements.recoverStyles();
+					globals.markedElements = null;
+				}
+				if (globals.alertSpan) {
+					globals.alertSpan.remove();
+					globals.alertSpan = null;
 				}
 			}
 			globals.inMouseHandler = false;
@@ -620,9 +625,11 @@
 					var settings = {
 						'license' : 'cc-zero',
 						'watermark' : true,
-						'watermarked' : false,
 						'charLimitForNotice': 256
 					};
+					var $recoveryDiv = $('<div class="copylight-css-recover">');
+					$this.replaceWith($recoveryDiv);
+					$recoveryDiv.append($this);
 
 					// If options exist, lets merge them
 					// with our default settings for this element
@@ -650,51 +657,7 @@
 		debug : function(arg) {
 			globals.debugMode = arg;
 			alert('copylight debug mode is ON');
-		},
-
-		watermark : function(arg) {
-			// returns elements that had their watermark status changed
-			
-			// http://stackoverflow.com/questions/2832008/
-			var changedList = $([]);
-			
-			var defaultWatermarkHandler = function(enable, license) {
-				var $this = $(this);
-				if ($this.hasClass('copylighted') === enable) {
-					throw "Expected copylighted status to be " + !enable;
-				}
-				if (enable) {
-					$this.addClass('copylighted');
-				} else {
-					$this.removeClass('copylighted');
-				}
-			};
-			
-			this.each(function(i, el){
-				
-				var $el = $(el);
-				var data = $el.data('copylight');
-				if (!data) {
-					throw Error("Copylight: No license for watermark on node");
-				}
-				var enable = arg ? true : false;
-				if (data.watermarked === enable) {
-					return;
-				}
-				if (typeof data.watermark == 'function') {
-					data.watermark.apply(el, [enable, data.license]);
-				} else {
-					if (data.watermark) {
-						defaultWatermarkHandler.apply(el, [enable, data.license]);
-					}
-				}
-				data.watermarked = enable;
-				changedList.push($el);
-			});
-			
-			return changedList;
-		},
-		
+		},		
 /*
 		// could add more functions here
 		// See article http://docs.jquery.com/Plugins/Authoring
@@ -737,16 +700,16 @@
 	});
 	
 	// http://stackoverflow.com/questions/7985923/
-    $.extend({
-        copylight: $.fn.copylight
-    });
+	$.extend({
+		copylight: $.fn.copylight
+	});
 
-    // Global initialization - runs one time
-    $(function() {
+	// Global initialization - runs one time
+	$(function() {
 		// scan document and try to do as much "automatic" smarts as possible
 		$.each(globals.licenseInfo, function(k, v) {
 			$("." + k).copylight({license: k});
 		});
-    });
+	});
 	
 }(jQuery)); // end CopyLight plugin
