@@ -271,7 +271,10 @@
 			throw "copylight: Modal dialog already being displayed.";
 		}
 
-		var $containerDiv = $("<div>License info goes here...</div>");
+		var $containerDiv = $("<div style='width: 600px;'><h2>This is where you make your case...</h2><p><i>\"Hey, we work really hard on our content, please don't copy, link to us instead, so we can keep it up to date!\"</i></p><input style='width: 99%;' value='" + 
+			// http://stackoverflow.com/a/11663455/211160
+			window.location.href + 
+			"'></input><p>Or...</p><p><i>\"Push a button to copy what you selected and add attribution links to the end!\"</i></p><input type='button' value='click me to copy with Tynt-like ugliness'><h2>Just don't mess with the browser's default copy.</h2></div>");
 
 		var $modalBox = $("<div id='basic-modal'></div>");
 
