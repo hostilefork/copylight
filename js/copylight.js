@@ -288,7 +288,12 @@
 			// of float as you scroll it in the same location it was
 			// when it popped up.
 
-			fixed: false
+			fixed: false,
+
+			onClose: function() {
+				saveData.restore();
+				$.modal.close();
+			}
 		});
 
 		event.preventDefault();
