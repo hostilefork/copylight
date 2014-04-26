@@ -68,28 +68,6 @@
 		}
 	};
 
-	// Philosophically, I believe that invading the user's ability to copy
-	// and paste text in any way is bad.  But what's even worse is if that
-	// interfering code causes a page to crash.  All callbacks in CopyLight
-	// are guarded with this exception handler so if they fail they will
-	// do so quietly.
-	function crashGuard(f) {
-		// http://stackoverflow.com/questions/1959040/
-		return function (/*...*/) {
-			if (globals.debugMode) {
-				// We want to know about crashes if we are debugging
-				return f.apply(this, arguments);
-			} else {
-				try {
-					return f.apply(this, arguments);
-				} catch (e) {
-					// Just sweep it under the rug.
-					return $.noop();
-				}
-			}
-		};
-	}
-
 	// http://stackoverflow.com/a/8196183/211160
 	jQuery.fn.cacheStyles = function() {
 		return this.each(function(){
@@ -516,7 +494,7 @@
 		}
 
 		/* display="none"?	display="inline"? */
-		alertSpan.mousedown(crashGuard(openCopyrightPolicyWindow));
+		alertSpan.mousedown(openCopyrightPolicyWindow);
 		
 		// https://developer.mozilla.org/En/DOM:selection
 		// anchorNode - Returns the node in which the selection begins. 
@@ -570,44 +548,38 @@
 	}
 
 	function mousedownHandler(event) {
-		crashGuard(function(event) {
-			globals.inMouseHandler = true;
-			if (globals.modalDialog === null) {
-				if (globals.markedElements) {
-					globals.markedElements.removeClass('copylighted');
-					globals.markedElements = null;
-				}
-				if (globals.alertSpan) {
-					globals.alertSpan.remove();
-					globals.alertSpan = null;
-				}
+		globals.inMouseHandler = true;
+		if (globals.modalDialog === null) {
+			if (globals.markedElements) {
+				globals.markedElements.removeClass('copylighted');
+				globals.markedElements = null;
 			}
-			globals.inMouseHandler = false;
-		})(event);
+			if (globals.alertSpan) {
+				globals.alertSpan.remove();
+				globals.alertSpan = null;
+			}
+		}
+		globals.inMouseHandler = false;
 	}
 
 	function mouseupHandler(event) {
-		crashGuard(function(event) {
-			globals.inMouseHandler = true;
-			if (event.which === 1 /* left click */) {
-				// Let the selection finalize mouseUp before disrupting the DOM
-				// failure to do this leads to weird behaviors, sometimes, which
-				// includes Firefox not receptive to the selection being changed
-				// by further mousedown messages (!)
-			
-				// only do this if we are not showing a dialog...
-				if (globals.modalDialog === null) {
-					window.setTimeout(crashGuard(function(x,y) {
-						notifyIfSubstantialSelection(event.pageX, event.pageY);
-					}), 0);
-				}
+		globals.inMouseHandler = true;
+		if (event.which === 1 /* left click */) {
+			// Let the selection finalize mouseUp before disrupting the DOM
+			// failure to do this leads to weird behaviors, sometimes, which
+			// includes Firefox not receptive to the selection being changed
+			// by further mousedown messages (!)
+		
+			// only do this if we are not showing a dialog...
+			if (globals.modalDialog === null) {
+				window.setTimeout(function(x,y) {
+					notifyIfSubstantialSelection(event.pageX, event.pageY);
+				}, 0);
 			}
-			globals.inMouseHandler = false;
-		})(event);
+		}
+		globals.inMouseHandler = false;
 	}
 
-	// Methods are only called through .copylight which has a crashGuard()
-	// All of these are implicitly protected against crashing in non-debug mode
 	var methods = {
 		init : function(options) {
 			
@@ -651,10 +623,6 @@
 			});
 		},
 
-		debug : function(arg) {
-			globals.debugMode = arg;
-			alert('copylight debug mode is ON');
-		},		
 /*
 		// could add more functions here
 		// See article http://docs.jquery.com/Plugins/Authoring
@@ -683,7 +651,7 @@
 		}
 	};
 
-	$.fn.copylight = crashGuard(function(method) {
+	$.fn.copylight = function(method) {
 
 		if (methods[method]) {
 			return methods[method].apply(
@@ -694,7 +662,7 @@
 		} else {
 			return $.error('No ' + method + '() on jQuery.copylight');
 		}
-	});
+	};
 	
 	// http://stackoverflow.com/questions/7985923/
 	$.extend({
