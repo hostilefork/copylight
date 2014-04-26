@@ -324,7 +324,7 @@
 			throw "copylight: Cannot call removeAnyWarnings from a mouse handler";
 		}
 		
-		globals.markedElements.recoverStyles();
+		globals.markedElements.removeClass('copylighted');
 		globals.markedElements = null;
 		
 		// Remove floating warning icon if it's there
@@ -418,8 +418,6 @@
 
 					$licensed = $licensed.add($current);
 
-					$current.cacheStyles();
-
 					$current.parent().cacheStyles();
 					$current.parent().recoverStyles();
 
@@ -484,8 +482,7 @@
 			// The second parameter says to include the element
 			// even if it's not fully selected
 			if (selection.containsNode(el, true) ) {
-				$el.css('background-image', 'url("../css/watermarks/' + data.license + '.png")');
-				$el.css('background-repeat', 'repeat');
+				$el.addClass('copylighted');
 
 				alertColors[globals.licenseInfo[data.license].color] = true;
 
@@ -494,7 +491,7 @@
 		});
 		
 		if (!showAlert) {
-			$licensed.recoverStyles();
+			$licensed.removeClass('copylighted');
 			globals.markedElements = $([]);
 			return;
 		}
@@ -577,7 +574,7 @@
 			globals.inMouseHandler = true;
 			if (globals.modalDialog === null) {
 				if (globals.markedElements) {
-					globals.markedElements.recoverStyles();
+					globals.markedElements.removeClass('copylighted');
 					globals.markedElements = null;
 				}
 				if (globals.alertSpan) {
