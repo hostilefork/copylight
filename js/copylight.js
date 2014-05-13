@@ -5,7 +5,6 @@
  *
  * MIT license:
  *	 http://www.opensource.org/licenses/mit-license.php
- *	 http://www.gnu.org/licenses/gpl.html
  *
  * For more information, see http://hostilefork.com/copylight
  */
