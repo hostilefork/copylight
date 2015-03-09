@@ -386,14 +386,13 @@
     			var $el = $(el);
 
 				var data = null;
-				var $current = $el;
-				do {
+				var $current = null;
+				$el.parents().each(function (i, current) {
+					$current = $(current);
 					data = $current.data('copylight');
-					if (data) {
-						break;
-					}
-					$current = $current.parent();
-				} while ($current.length);
+					if (data)
+						return false;
+				});
 
 				if (data && !$licensed.filter($current).length) {
 					var textSelected = selection.toString();
@@ -409,9 +408,10 @@
 					var bgImage = 'none';
 					var bgRepeat = 'repeat';
 					var rootPosition = '0';
-					var $next = $el.parent();
+					var $next = null;
 				
-					while($next.length){
+					$el.parent().parents().each(function (i, next) {
+						$next = $(next);
 						var bg = $next.css('background-image');
 						if (bg && bg !== 'none'){
 							bgImage = bg;
@@ -419,13 +419,11 @@
 							rootPosition = $next.offset();
 							rootPosition.x += $next[0].style.backgroundPositionX || 0;
 							rootPosition.y += $next[0].style.backgroundPositionY || 0;
-							break;
+							return false;
 						}
-						$next = $next.parent();
-					};
-					if (bgImage == 'none'){
+					});
+					if (bgImage == 'none')
 						bgImage = undefined;
-					}
 					
 					var parent = el.parentNode;
 					if (bgImage && (
